@@ -1,0 +1,36 @@
+# Don't check auto-generated stuff into git
+coverage
+build
+
+# Cruft
+.DS_Store
+npm-debug.log
+*.sqlite3
+env/
+__pycache__/
+uploads/
+
+*.pyc
+*.env
+*/settings/local.py
+/staticfiles/*
+/mediafiles/*
+
+# coverage result
+.coverage
+/coverage/
+
+# pycharm
+.idea/
+
+# data
+*.dump
+
+# General
+/{{project_name}}-venv/
+/venv/
+/env/
+/output/
+/cache/
+
+.env

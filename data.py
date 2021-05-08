@@ -63,7 +63,7 @@ class Movie(DataType):
 		lowered_title = self.__data['original_title'].lower()
 		underscored_title = re.sub(r' +', '_', lowered_title)
 		clean_title = re.sub(r'\W', '', underscored_title)
-		self.__data['original_title'] = clean_title
+		self.__data['original_title_normalized'] = clean_title
 
 
 class App(DataType):

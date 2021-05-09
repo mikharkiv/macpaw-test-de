@@ -2,78 +2,87 @@ import re
 from datetime import datetime
 from abc import abstractmethod, ABC
 
+import settings
+
+DATE_STORE_FORMAT = settings.dev.get('DATE_STORE_FORMAT', '')
+
 
 class DataType(ABC):
 	fields = {}
-	__data = {}
-	__is_valid = False
+	_data = {}
+	_is_valid = False
 
-	def __init__(self, **kwargs):
-		self.__data = kwargs
-		self.__validate()
-		self.__process()
+	def setup(self, **kwargs):
+		self._data = kwargs
+		self._validate()
+		if self.is_valid:
+			self._process()
+		else:
+			print('!INVALID!', self._data)
 
-	def __validate(self):
-		for (name, typ) in self.fields.items():
-			if type(self.__data.get(name, None)) != type:
-				self.__is_valid = False
+	def _validate(self):
+		for (name, field_type) in self.fields.items():
+			if type(self._data.get(name, None)) != field_type:
+				self._is_valid = False
 				return
-		self.__is_valid = True
+		self._is_valid = True
 
 	@abstractmethod
-	def __process(self):
+	def _process(self):
 		pass
 
 	@property
 	def is_valid(self):
-		return self.__is_valid
+		return self._is_valid
+
+	@property
+	def values(self):
+		return list(self._data.values())
 
 	@property
 	def data(self):
-		return list(self.__data.values())
+		return self._data.copy()
 
 
 class Song(DataType):
 	fields = {
-		'artist_name': 'str',
-		'title': 'str',
-		'year': 'int',
-		'release': 'str',
+		'artist_name': str,
+		'title': str,
+		'year': int,
+		'release': str,
 	}
 
-	def __process(self):
-		self.__data['ingestion_time'] = datetime.now()
+	def _process(self):
+		self._data['ingestion_time'] = datetime.now().strftime(DATE_STORE_FORMAT)
 
 
 class Movie(DataType):
 	fields = {
-		'original_title': 'str',
-		'original_language': 'str',
-		'budget': 'int',
-		'is_adult': 'bool',
-		'release_date': 'str',
+		'original_title': str,
+		'original_language': str,
+		'budget': int,
+		'is_adult': bool,
+		'release_date': str,
 	}
 
-	def __process(self):
-		self.__normalize_title()
-		parsed_date = datetime.strptime(self.__data['release_date'], '%Y-%m-%d')
-		self.__data['release_date'] = parsed_date
+	def _process(self):
+		self._normalize_title()
 
-	def __normalize_title(self):
-		lowered_title = self.__data['original_title'].lower()
+	def _normalize_title(self):
+		lowered_title = self._data['original_title'].lower()
 		underscored_title = re.sub(r' +', '_', lowered_title)
 		clean_title = re.sub(r'\W', '', underscored_title)
-		self.__data['original_title_normalized'] = clean_title
+		self._data['original_title_normalized'] = clean_title
 
 
 class App(DataType):
 	fields = {
-		'name': 'str',
-		'genre': 'str',
-		'rating': 'float',
-		'version': 'str',
-		'size_bytes': 'int',
+		'name': str,
+		'genre': str,
+		'rating': float,
+		'version': str,
+		'size_bytes': int,
 	}
 
-	def __process(self):
-		self.__data['is_awesome'] = len(self.__data['name']) > 8
+	def _process(self):
+		self._data['is_awesome'] = len(self._data['name']) > 8

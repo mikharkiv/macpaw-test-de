@@ -7,6 +7,14 @@ Using aiohttp, Flake8, Travis CI, and Docker.
 
 ## Table of contents
 * [Installation](#installation)
+  * [Using Docker](#using-docker)
+  * [Using Python virtual environment](#using-python-virtual-environment)
+* [Command line arguments](#command-line-arguments)
+* [Config file description](#config-file-description)
+* [Testing](#testing)
+* [Project structure description](#project-structure-description)
+* [Logic behind the scenes](#logic-behind-the-scenes)
+* [Dependencies](#dependencies)
 
 ## Installation
 > Note: all commands should be executed in the directory where you have cloned this repository  

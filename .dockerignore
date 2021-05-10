@@ -1,0 +1,9 @@
+**.editorconfig
+**.gitignore
+**.travis.yml
+**/.mypy_cache
+**/.pytest_cache
+**/logs
+/venv
+**db.sqlite3
+**/*processed.json

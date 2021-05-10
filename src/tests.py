@@ -1,6 +1,6 @@
 import unittest
 
-from src.data import App, Movie, Song
+from data import App, Movie, Song
 
 
 class DataTypesTest(unittest.TestCase):

@@ -9,9 +9,10 @@ PROCESSED_FILENAME = settings.PROFILE.get('PROCESSED_FILES_FILENAME')
 if not PROCESSED_FILENAME:
 	raise KeyError('ImproperlyConfigured: PROCESSED_FILES_FILENAME should be set')
 PROCESSED_FILE = os.path.abspath(os.path.join(__file__,
-											'..\\..\\' + PROCESSED_FILENAME))
+											'../../' + PROCESSED_FILENAME))
 
 try:
+	os.makedirs(os.path.dirname(PROCESSED_FILE), exist_ok=True)
 	with open(PROCESSED_FILE, 'r') as file:
 		_registry = json.loads(file.read())
 		if type(_registry) != list:

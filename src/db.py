@@ -68,7 +68,7 @@ DB_NAME = settings.PROFILE.get('DATABASE_NAME')
 if not DB_NAME:
 	raise KeyError('ImproperlyConfigured: DATABASE_NAME should be set')
 
-DB_PATH = os.path.abspath(os.path.join(__file__, '..\\..\\' + DB_NAME))
+DB_PATH = os.path.abspath(os.path.join(__file__, '../../' + DB_NAME))
 _connection = sqlite3.connect(DB_PATH)
 
 _connection.execute(CREATE_TABLE_APPS)

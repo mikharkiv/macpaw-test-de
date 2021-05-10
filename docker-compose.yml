@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  app:
+    build: .
+    image: mikharkiv-macpaw-test
+    working_dir: /macpaw-test/src
+    command: python main.py --profile docker
+    volumes:
+      - .:/macpaw-test

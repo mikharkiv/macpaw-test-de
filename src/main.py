@@ -29,7 +29,8 @@ def process_object(obj):
 def get_objects(raw_content):
 	objects = json.loads(raw_content)
 	processed_objects = map(process_object, objects)
-	valid_objects = filter(lambda x: x is not None and x.is_valid, processed_objects)
+	valid_objects = filter(lambda x: x is not None and x.is_valid,
+							processed_objects)
 	return list(valid_objects)
 
 
@@ -41,10 +42,12 @@ async def process_file(filename):
 	registry.register_file(filename)
 
 
+# Set up logging to console and, if needed, to file
 def setup_logging():
 	log_format = '[%(asctime)s] [%(levelname)s] %(message)s'
 	formatter = logging.Formatter(log_format, datefmt='%H:%M:%S')
-	logging.basicConfig(datefmt=formatter.datefmt, format=log_format, level=logging.INFO)
+	logging.basicConfig(datefmt=formatter.datefmt, format=log_format,
+						level=logging.INFO)
 
 	if settings.PROFILE.getboolean('SAVE_LOG'):
 		# Setup logger's file handler to save in `logs/_date_.log`

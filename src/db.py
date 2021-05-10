@@ -17,7 +17,8 @@ TABLE_NAMES = {
 # Names of columns in database tables
 # Sorting needed for proper writing
 TABLE_COLS = {
-	App: sorted(['name', 'genre', 'rating', 'version', 'size_bytes', 'is_awesome']),
+	App: sorted(['name', 'genre', 'rating', 'version', 'size_bytes',
+				'is_awesome']),
 	Song: sorted(['artist_name', 'title', 'year', 'release', 'ingestion_time']),
 	Movie: sorted(['original_title', 'original_language', 'budget', 'is_adult',
 					'release_date', 'original_title_normalized']),
@@ -100,8 +101,8 @@ def _group_objects(objects: list) -> dict:
 	classes = set(map(lambda x: x.__class__, objects))
 	# For every class, get a list of items and then theirs values
 	return {cls: list(map(lambda y: y.values,
-						filter(lambda x: x.__class__ == cls, objects)))
-			for cls in classes}
+			filter(lambda x: x.__class__ == cls, objects)))
+		for cls in classes}
 
 
 def commit():

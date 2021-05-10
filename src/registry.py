@@ -8,7 +8,8 @@ FORCE_FILES = settings.ARGS.force
 PROCESSED_FILENAME = settings.PROFILE.get('PROCESSED_FILES_FILENAME')
 if not PROCESSED_FILENAME:
 	raise KeyError('ImproperlyConfigured: PROCESSED_FILES_FILENAME should be set')
-PROCESSED_FILE = os.path.abspath(os.path.join(__file__, '..\\..\\' + PROCESSED_FILENAME))
+PROCESSED_FILE = os.path.abspath(os.path.join(__file__,
+											'..\\..\\' + PROCESSED_FILENAME))
 
 try:
 	with open(PROCESSED_FILE, 'r') as file:

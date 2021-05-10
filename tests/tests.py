@@ -30,8 +30,8 @@ class DataTypesTest(unittest.TestCase):
 		self.assertFalse(movie.is_valid)
 
 		movie = Movie()
-		movie.setup(original_title='Hello !@#world!!', original_language='ua', budget=0,
-					is_adult=False, release_date='01-21-2001')
+		movie.setup(original_title='Hello !@#world!!', original_language='ua',
+					budget=0, is_adult=False, release_date='01-21-2001')
 		self.assertTrue(movie.is_valid)
 		self.assertEqual('hello_world', movie.data['original_title_normalized'])
 

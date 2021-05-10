@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.com/mikharkiv/macpaw-test-de.svg?branch=master)](https://travis-ci.com/mikharkiv/macpaw-test-de)
 
 A test task for MacPaw Data Engineering Summer Intership 2021. 
+Task is available [here](TASK.md).
 
 Using aiohttp, Flake8, Travis CI, and Docker.
 

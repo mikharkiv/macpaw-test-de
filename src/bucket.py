@@ -1,4 +1,5 @@
 import logging
+from urllib.error import HTTPError, URLError
 
 import aiohttp
 import urllib.request
@@ -22,7 +23,7 @@ def get_bucket_files() -> list:
 	"""
 	try:
 		url = urllib.request.urlopen(f'http://{BUCKET_NAME}/{FILES_LIST_KEY}')
-	except (urllib.request.HTTPError, urllib.request.URLError) as e:
+	except (HTTPError, URLError) as e:
 		logging.critical(e)
 		raise e
 	data = url.read()

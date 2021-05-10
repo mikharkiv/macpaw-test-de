@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 from abc import abstractmethod, ABC
+from typing import Dict, Any
 
 from src import settings
 
@@ -14,8 +15,8 @@ class DataType(ABC):
 	Abstract class of the DataType
 	Each type must inherit it and provide own **fields** and **_process()**
 	"""
-	fields = {}  # Fields and their type (for validation)
-	_data = {}
+	fields: Dict[str, type] = {}  # Fields and their type (for validation)
+	_data: Dict[str, Any] = {}
 	_is_valid = False
 
 	def setup(self, **kwargs):

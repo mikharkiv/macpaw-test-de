@@ -1,4 +1,5 @@
 import json
+import logging
 
 import settings
 
@@ -11,6 +12,8 @@ try:
 	with open(PROCESSED_FILENAME, 'r') as file:
 		_registry = json.loads(file.read())
 		if type(_registry) != list:
+			logging.warning('Processed files registry is corrupt.'
+							'Processing all files...')
 			_registry = []
 except FileNotFoundError:
 	_registry = []

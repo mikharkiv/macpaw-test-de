@@ -1,3 +1,5 @@
+import logging
+
 import aiohttp
 import urllib.request
 import settings
@@ -18,7 +20,11 @@ def get_bucket_files() -> list:
 
 	:return: list of names of the files
 	"""
-	url = urllib.request.urlopen(f'http://{BUCKET_NAME}/{FILES_LIST_KEY}')
+	try:
+		url = urllib.request.urlopen(f'http://{BUCKET_NAME}/{FILES_LIST_KEY}')
+	except (urllib.request.HTTPError, urllib.request.URLError) as e:
+		logging.critical(e)
+		raise e
 	data = url.read()
 	return data.decode(BUCKET_ENCODING).split('\n')
 

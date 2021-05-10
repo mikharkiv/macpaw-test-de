@@ -1,9 +1,11 @@
+import asyncio
 import json
+import time
 
 import bucket
 import db
+import storage
 from data import App, Movie, Song
-from utils import print_elapsed_time
 
 data_types = {
 	'app': App,
@@ -12,39 +14,44 @@ data_types = {
 }
 
 
-# @print_elapsed_time
-def process_entry(entry):
-	# print('Processing entry...', end=' ')
-	entry_type = entry.get('type', None)
+def process_object(obj):
+	entry_type = obj.get('type', None)
 	data_class = data_types.get(entry_type, None)
 	if data_class is not None:
 		data_obj = data_class()
-		data_obj.setup(**entry['data'])
-		if data_obj.is_valid:
-			db.write_data(data_obj)
-		else:
-			print('Invalid object!')
+		data_obj.setup(**obj['data'])
+		return data_obj
 
 
-@print_elapsed_time
-def process_file(filename):
-	print('Processing file...')
-	content = bucket.get_bucket_file(filename)
-	entries = json.loads(content)
-	for entry in entries:
-		process_entry(entry)
-	db.write_file_processed(filename)
-	db.finish_transactions()
-	print('Processing file done')
+def get_objects(raw_content):
+	objects = json.loads(raw_content)
+	processed_objects = map(process_object, objects)
+	valid_objects = filter(lambda x: x is not None and x.is_valid, processed_objects)
+	return list(valid_objects)
 
 
-@print_elapsed_time
-def main():
-	files = bucket.get_files_list().split('\n')
-	for file in files:
-		if not db.was_file_processed(file):
-			process_file(file)
+async def process_file(filename):
+	print('Processing file', filename)
+	content = await bucket.async_get_bucket_file(filename)
+	entries = get_objects(content)
+	db.write_objects(entries)
+	db.commit()
+	storage.register_file(filename)
+
+
+async def main():
+	start_time = time.time()
+	files = bucket.get_bucket_files().split('\n')
+	files = list(filter(lambda x: not storage.was_file_processed(x), files))
+	if not files:
+		print('No files to process')
+
+	tasks = [process_file(file) for file in files]
+	await asyncio.gather(*tasks)
+	await bucket.close_session()
+	print('Done in {:.4f} seconds'.format(time.time() - start_time))
 
 
 if __name__ == '__main__':
-	main()
+	loop = asyncio.get_event_loop()
+	loop.run_until_complete(main())

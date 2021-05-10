@@ -1,7 +1,5 @@
-import boto3
-from botocore import UNSIGNED
-from botocore.config import Config
-
+import aiohttp
+import urllib.request
 import settings
 
 FILES_LIST_KEY = settings.dev.get('FILES_LIST_KEY', None)
@@ -11,24 +9,20 @@ BUCKET_ENCODING = settings.dev.get('BUCKET_ENCODING', None)
 if not FILES_LIST_KEY or not BUCKET_NAME or not BUCKET_ENCODING:
 	raise KeyError('Bucket settings are incorrect')
 
-__bucket = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
+_session = aiohttp.ClientSession()
 
 
-def get_files_list() -> str:
-	"""
-	Retrieve list of files from S3 bucket
-
-	:return: List of files (if available)
-	"""
-	return get_bucket_file(FILES_LIST_KEY)
+def get_bucket_files():
+	url = urllib.request.urlopen(f'http://{BUCKET_NAME}/{FILES_LIST_KEY}')
+	data = url.read()
+	return data.decode(BUCKET_ENCODING)
 
 
-def get_bucket_file(filename: str) -> str:
-	"""
-	Returns contents of given file on S3 bucket
+async def async_get_bucket_file(filename):
+	async with _session.get(f'http://{BUCKET_NAME}/{filename}') as resp:
+		data = await resp.text()
+		return data
 
-	:param filename: Name of the file
-	:return: Content of the file
-	"""
-	list_obj = __bucket.Object(bucket_name=BUCKET_NAME, key=filename)
-	return list_obj.get()['Body'].read().decode(BUCKET_ENCODING)
+
+async def close_session():
+	await _session.close()

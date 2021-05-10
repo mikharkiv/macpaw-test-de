@@ -4,7 +4,9 @@ from abc import abstractmethod, ABC
 
 import settings
 
-DATE_STORE_FORMAT = settings.dev.get('DATE_STORE_FORMAT', '')
+DATE_STORE_FORMAT = settings.dev.get('DATE_STORE_FORMAT', None)
+if not DATE_STORE_FORMAT:
+	raise KeyError('ImproperlyConfigured: settings.DATE_STORE_FORMAT should be set')
 
 
 class DataType(ABC):
@@ -17,8 +19,6 @@ class DataType(ABC):
 		self._validate()
 		if self.is_valid:
 			self._process()
-		else:
-			print('!INVALID!', self._data)
 
 	def _validate(self):
 		for (name, field_type) in self.fields.items():
@@ -37,11 +37,8 @@ class DataType(ABC):
 
 	@property
 	def values(self):
-		return list(self._data.values())
-
-	@property
-	def data(self):
-		return self._data.copy()
+		values = [item for (k, item) in sorted(self._data.items())]
+		return list(values)
 
 
 class Song(DataType):
@@ -85,4 +82,4 @@ class App(DataType):
 	}
 
 	def _process(self):
-		self._data['is_awesome'] = len(self._data['name']) > 8
+		self._data['is_awesome'] = self._data['size_bytes'] < 1_000_000

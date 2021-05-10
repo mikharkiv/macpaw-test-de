@@ -3,10 +3,27 @@ import sqlite3
 import settings
 from data import App, Song, Movie
 
+INSERT = 'INSERT OR REPLACE INTO {} ({}) VALUES ({})'
+
 TABLE_NAMES = {
 	App: 'apps',
 	Song: 'songs',
-	Movie: 'movies'
+	Movie: 'movies',
+}
+
+TABLE_COLS = {
+	App: sorted(['name', 'genre', 'rating', 'version', 'size_bytes', 'is_awesome']),
+	Song: sorted(['artist_name', 'title', 'year', 'release', 'ingestion_time']),
+	Movie: sorted(['original_title', 'original_language', 'budget', 'is_adult',
+					'release_date', 'original_title_normalized']),
+}
+
+# For every table, get INSERT query with column names
+INSERT_QUERIES = {
+	obj_class: INSERT.format(TABLE_NAMES[obj_class],
+							','.join(fields),				# INTO _ (..,..)
+							','.join(['?'] * len(fields)))  # VALUES (?,...)
+	for (obj_class, fields) in TABLE_COLS.items()
 }
 
 CREATE_TABLE_SONGS = '''
@@ -41,59 +58,35 @@ CREATE TABLE IF NOT EXISTS apps (
 	PRIMARY KEY (name, version)
 );'''
 
-CREATE_TABLE_FILES = '''
-CREATE TABLE IF NOT EXISTS files (
-	file_name TEXT NOT NULL,
-	PRIMARY KEY (file_name)
-);'''
-
-INSERT_TEMPLATE = 'INSERT INTO {} VALUES ({})'
-INSERT_FULL_TEMPLATE = 'INSERT INTO {} ({}) VALUES ({})'
-
 DB_NAME = settings.dev.get('DATABASE_NAME', None)
 
 if not DB_NAME:
-	raise KeyError('Database name should be specified')
+	raise KeyError('ImproperlyConfigured: settings.DATABASE_NAME should be set')
 
 _connection = sqlite3.connect(DB_NAME)
-_cursor = _connection.cursor()
 
-_cursor.execute(CREATE_TABLE_APPS)
-_cursor.execute(CREATE_TABLE_MOVIES)
-_cursor.execute(CREATE_TABLE_SONGS)
-_cursor.execute(CREATE_TABLE_FILES)
+_connection.execute(CREATE_TABLE_APPS)
+_connection.execute(CREATE_TABLE_MOVIES)
+_connection.execute(CREATE_TABLE_SONGS)
 _connection.commit()
 
 
-def was_file_processed(filename):
-	_cursor.execute('SELECT file_name FROM files WHERE file_name=?', (filename,))
-	return bool(_cursor.fetchall())
+def write_objects(data_objects: list):
+	groups = group_objects(data_objects)
+	# For every class in group, write their objects
+	for obj_class in groups.keys():
+		query = INSERT_QUERIES.get(obj_class, None)
+		if query:
+			_connection.executemany(query, groups[obj_class])
 
 
-def write_file_processed(filename):
-	write('files', [filename])
+def group_objects(objects: list) -> dict:
+	classes = set(map(lambda x: x.__class__, objects))
+	# For every class, get a list of items and then theirs values
+	return {cls: list(map(lambda y: y.values,
+						filter(lambda x: x.__class__ == cls, objects)))
+			for cls in classes}
 
 
-def write_data(data_obj):
-	table_name = TABLE_NAMES.get(data_obj.__class__, None)
-	if table_name:
-		query = INSERT_FULL_TEMPLATE.format(table_name,
-											','.join(data_obj.data.keys()),
-											','.join(['?'] * len(data_obj.data.values())))
-		try:
-			_cursor.execute(query, list(data_obj.data.values()))
-		except sqlite3.IntegrityError:
-			print('Duplicate detected for given values: ', data_obj.__class__.__name__,
-					list(data_obj.data.values()))
-
-
-def write(db_name, values):
-	query = INSERT_TEMPLATE.format(db_name, ','.join(['?'] * len(values)))
-	try:
-		_cursor.execute(query, values)
-	except sqlite3.IntegrityError:
-		print('Duplicate detected for given values: ', values)
-
-
-def finish_transactions():
+def commit():
 	_connection.commit()

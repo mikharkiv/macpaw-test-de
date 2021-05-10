@@ -4,4 +4,5 @@ dev = {
 	'FILES_LIST_KEY': 'files_list.data',
 	'BUCKET_ENCODING': 'utf8',
 	'DATE_STORE_FORMAT': '%Y-%m-%d %H:%M:%S',
+	'PROCESSED_FILES_FILENAME': 'processed.json',
 }

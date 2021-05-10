@@ -34,3 +34,5 @@ uploads/
 /cache/
 
 .env
+processed.json
+*.log

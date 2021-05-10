@@ -17,10 +17,18 @@ except FileNotFoundError:
 
 
 def was_file_processed(filename):
+	"""
+	:param filename: name of the file
+	:return: whether this file was already processed
+	"""
 	return filename in _registry
 
 
 def register_file(filename):
+	"""
+	Registers given filename (marks as processed)
+	:param filename: name of the file
+	"""
 	_registry.append(filename)
 	with open(PROCESSED_FILENAME, 'w') as file_obj:
 		file_obj.write(json.dumps(_registry))

@@ -3,14 +3,18 @@ import sqlite3
 import settings
 from data import App, Song, Movie
 
+# SQL Insertion template
 INSERT = 'INSERT OR REPLACE INTO {} ({}) VALUES ({})'
 
+# Names of the tables in the database
 TABLE_NAMES = {
 	App: 'apps',
 	Song: 'songs',
 	Movie: 'movies',
 }
 
+# Names of columns in database tables
+# Sorting needed for proper writing
 TABLE_COLS = {
 	App: sorted(['name', 'genre', 'rating', 'version', 'size_bytes', 'is_awesome']),
 	Song: sorted(['artist_name', 'title', 'year', 'release', 'ingestion_time']),
@@ -72,7 +76,12 @@ _connection.commit()
 
 
 def write_objects(data_objects: list):
-	groups = group_objects(data_objects)
+	"""
+	Writes given objects (instances of data.DataType) to the database
+
+	:param data_objects: objects to write
+	"""
+	groups = _group_objects(data_objects)
 	# For every class in group, write their objects
 	for obj_class in groups.keys():
 		query = INSERT_QUERIES.get(obj_class, None)
@@ -80,7 +89,13 @@ def write_objects(data_objects: list):
 			_connection.executemany(query, groups[obj_class])
 
 
-def group_objects(objects: list) -> dict:
+def _group_objects(objects: list) -> dict:
+	"""
+	Groups given objects (instances of data.DataType) by classes
+
+	:param objects: objects to group
+	:return: dictionary: {class: [objects values]}
+	"""
 	classes = set(map(lambda x: x.__class__, objects))
 	# For every class, get a list of items and then theirs values
 	return {cls: list(map(lambda y: y.values,
@@ -89,4 +104,7 @@ def group_objects(objects: list) -> dict:
 
 
 def commit():
+	"""
+	Applies database changes
+	"""
 	_connection.commit()

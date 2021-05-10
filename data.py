@@ -10,7 +10,11 @@ if not DATE_STORE_FORMAT:
 
 
 class DataType(ABC):
-	fields = {}
+	"""
+	Abstract class of the DataType
+	Each type must inherit it and provide own **fields** and **_process()**
+	"""
+	fields = {}  # Fields and their type (for validation)
 	_data = {}
 	_is_valid = False
 
@@ -29,6 +33,9 @@ class DataType(ABC):
 
 	@abstractmethod
 	def _process(self):
+		"""
+		Processing data
+		"""
 		pass
 
 	@property
@@ -37,6 +44,11 @@ class DataType(ABC):
 
 	@property
 	def values(self):
+		"""
+		Get data values
+
+		:return: sorted values of the data
+		"""
 		values = [item for (k, item) in sorted(self._data.items())]
 		return list(values)
 
@@ -82,4 +94,5 @@ class App(DataType):
 	}
 
 	def _process(self):
+		# Even today size matters
 		self._data['is_awesome'] = self._data['size_bytes'] < 1_000_000

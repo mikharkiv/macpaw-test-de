@@ -7,6 +7,7 @@ import db
 import storage
 from data import App, Movie, Song
 
+# Maps data types in given JSON to data classes
 data_types = {
 	'app': App,
 	'movie': Movie,
@@ -23,6 +24,7 @@ def process_object(obj):
 		return data_obj
 
 
+# Processes objects and returns only valid ones
 def get_objects(raw_content):
 	objects = json.loads(raw_content)
 	processed_objects = map(process_object, objects)
@@ -32,22 +34,23 @@ def get_objects(raw_content):
 
 async def process_file(filename):
 	print('Processing file', filename)
-	content = await bucket.async_get_bucket_file(filename)
+	content = await bucket.get_bucket_file(filename)
 	entries = get_objects(content)
 	db.write_objects(entries)
-	db.commit()
 	storage.register_file(filename)
 
 
 async def main():
 	start_time = time.time()
-	files = bucket.get_bucket_files().split('\n')
+	files = bucket.get_bucket_files()
+	# Get files which wasn't yet processed
 	files = list(filter(lambda x: not storage.was_file_processed(x), files))
 	if not files:
 		print('No files to process')
 
 	tasks = [process_file(file) for file in files]
 	await asyncio.gather(*tasks)
+	db.commit()
 	await bucket.close_session()
 	print('Done in {:.4f} seconds'.format(time.time() - start_time))
 

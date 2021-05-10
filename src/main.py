@@ -5,11 +5,8 @@ import json
 import logging
 import time
 
-import bucket
-import db
-import registry
-import settings
-from data import App, Movie, Song
+from src import registry, bucket, db, settings
+from src.data import App, Movie, Song
 
 # Maps data types in given JSON to data classes
 data_types = {

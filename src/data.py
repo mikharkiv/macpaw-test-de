@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 from abc import abstractmethod, ABC
 
-import settings
+from src import settings
 
 DATE_STORE_FORMAT = settings.PROFILE.get('DATE_STORE_FORMAT')
 if not DATE_STORE_FORMAT:

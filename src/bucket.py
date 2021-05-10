@@ -2,7 +2,7 @@ import logging
 
 import aiohttp
 import urllib.request
-import settings
+from src import settings
 
 FILES_LIST_KEY = settings.PROFILE.get('FILES_LIST_KEY')
 BUCKET_NAME = settings.PROFILE.get('BUCKET_NAME')

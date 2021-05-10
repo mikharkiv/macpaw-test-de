@@ -1,7 +1,8 @@
+import os
 import sqlite3
 
-import settings
-from data import App, Song, Movie
+from src import settings
+from src.data import App, Song, Movie
 
 # SQL Insertion template
 INSERT = 'INSERT OR REPLACE INTO {} ({}) VALUES ({})'
@@ -63,11 +64,11 @@ CREATE TABLE IF NOT EXISTS apps (
 );'''
 
 DB_NAME = settings.PROFILE.get('DATABASE_NAME')
-
 if not DB_NAME:
 	raise KeyError('ImproperlyConfigured: DATABASE_NAME should be set')
 
-_connection = sqlite3.connect(DB_NAME)
+DB_PATH = os.path.abspath(os.path.join(__file__, '..\\..\\' + DB_NAME))
+_connection = sqlite3.connect(DB_PATH)
 
 _connection.execute(CREATE_TABLE_APPS)
 _connection.execute(CREATE_TABLE_MOVIES)

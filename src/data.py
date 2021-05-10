@@ -52,6 +52,10 @@ class DataType(ABC):
 		values = [item for (k, item) in sorted(self._data.items())]
 		return list(values)
 
+	@property
+	def data(self):
+		return self._data.copy()
+
 
 class Song(DataType):
 	fields = {

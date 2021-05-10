@@ -4,12 +4,12 @@ import aiohttp
 import urllib.request
 import settings
 
-FILES_LIST_KEY = settings.dev.get('FILES_LIST_KEY', None)
-BUCKET_NAME = settings.dev.get('BUCKET_NAME', None)
-BUCKET_ENCODING = settings.dev.get('BUCKET_ENCODING', None)
+FILES_LIST_KEY = settings.PROFILE.get('FILES_LIST_KEY')
+BUCKET_NAME = settings.PROFILE.get('BUCKET_NAME')
+BUCKET_ENCODING = settings.PROFILE.get('BUCKET_ENCODING')
 
 if not FILES_LIST_KEY or not BUCKET_NAME or not BUCKET_ENCODING:
-	raise KeyError('Bucket settings are incorrect')
+	raise KeyError('ImproperlyConfigured: Bucket settings are incorrect')
 
 _session = aiohttp.ClientSession()
 

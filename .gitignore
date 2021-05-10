@@ -35,3 +35,4 @@ uploads/
 
 .env
 processed.json
+*.log

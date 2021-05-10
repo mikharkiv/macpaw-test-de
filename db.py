@@ -62,10 +62,10 @@ CREATE TABLE IF NOT EXISTS apps (
 	PRIMARY KEY (name, version)
 );'''
 
-DB_NAME = settings.dev.get('DATABASE_NAME', None)
+DB_NAME = settings.PROFILE.get('DATABASE_NAME')
 
 if not DB_NAME:
-	raise KeyError('ImproperlyConfigured: settings.DATABASE_NAME should be set')
+	raise KeyError('ImproperlyConfigured: DATABASE_NAME should be set')
 
 _connection = sqlite3.connect(DB_NAME)
 

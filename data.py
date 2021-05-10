@@ -4,9 +4,9 @@ from abc import abstractmethod, ABC
 
 import settings
 
-DATE_STORE_FORMAT = settings.dev.get('DATE_STORE_FORMAT', None)
+DATE_STORE_FORMAT = settings.PROFILE.get('DATE_STORE_FORMAT')
 if not DATE_STORE_FORMAT:
-	raise KeyError('ImproperlyConfigured: settings.DATE_STORE_FORMAT should be set')
+	raise KeyError('ImproperlyConfigured: DATE_STORE_FORMAT should be set')
 
 
 class DataType(ABC):

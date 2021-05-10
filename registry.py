@@ -3,10 +3,10 @@ import logging
 
 import settings
 
-PROCESSED_FILENAME = settings.dev['PROCESSED_FILES_FILENAME']
+FORCE_FILES = settings.ARGS.force
+PROCESSED_FILENAME = settings.PROFILE.get('PROCESSED_FILES_FILENAME')
 if not PROCESSED_FILENAME:
-	raise KeyError('ImproperlyConfigured: settings.PROCESSED_FILES_FILENAME '
-					'should be set')
+	raise KeyError('ImproperlyConfigured: PROCESSED_FILES_FILENAME should be set')
 
 try:
 	with open(PROCESSED_FILENAME, 'r') as file:
@@ -24,7 +24,7 @@ def was_file_processed(filename):
 	:param filename: name of the file
 	:return: whether this file was already processed
 	"""
-	return filename in _registry
+	return False if FORCE_FILES else filename in _registry
 
 
 def register_file(filename):

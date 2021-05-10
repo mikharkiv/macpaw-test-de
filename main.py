@@ -1,4 +1,6 @@
 import asyncio
+import os
+from datetime import datetime
 import json
 import logging
 import time
@@ -6,6 +8,7 @@ import time
 import bucket
 import db
 import registry
+import settings
 from data import App, Movie, Song
 
 # Maps data types in given JSON to data classes
@@ -42,8 +45,19 @@ async def process_file(filename):
 
 
 def setup_logging():
-	logging.basicConfig(datefmt='%H:%M:%S', format='[%(asctime)s] [%(levelname)s] %(message)s')
-	logging.getLogger().setLevel(level=logging.INFO)
+	log_format = '[%(asctime)s] [%(levelname)s] %(message)s'
+	formatter = logging.Formatter(log_format, datefmt='%H:%M:%S')
+	logging.basicConfig(datefmt=formatter.datefmt, format=log_format, level=logging.INFO)
+
+	if settings.PROFILE.getboolean('SAVE_LOG'):
+		# Setup logger's file handler to save in `logs/_date_.log`
+		filename = datetime.now().strftime('logs/%Y-%m-%d_%H-%M-%S.log')
+		# Create dirs structure, if not exists
+		os.makedirs(os.path.dirname(filename), exist_ok=True)
+		file_handler = logging.FileHandler(filename)
+		file_handler.setFormatter(formatter)
+		logging.getLogger().addHandler(file_handler)
+
 	logging.info('Start processing')
 
 

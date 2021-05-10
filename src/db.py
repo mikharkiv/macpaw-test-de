@@ -1,8 +1,8 @@
 import os
 import sqlite3
 
-from src import settings
-from src.data import App, Song, Movie
+import settings
+from data import App, Song, Movie
 
 # SQL Insertion template
 INSERT = 'INSERT OR REPLACE INTO {} ({}) VALUES ({})'

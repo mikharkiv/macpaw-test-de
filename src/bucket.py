@@ -3,7 +3,7 @@ from urllib.error import HTTPError, URLError
 
 import aiohttp
 import urllib.request
-from src import settings
+import settings
 
 FILES_LIST_KEY = settings.PROFILE.get('FILES_LIST_KEY')
 BUCKET_NAME = settings.PROFILE.get('BUCKET_NAME')

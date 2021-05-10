@@ -3,7 +3,7 @@ from datetime import datetime
 from abc import abstractmethod, ABC
 from typing import Dict, Any
 
-from src import settings
+import settings
 
 DATE_STORE_FORMAT = settings.PROFILE.get('DATE_STORE_FORMAT')
 if not DATE_STORE_FORMAT:

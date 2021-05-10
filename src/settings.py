@@ -12,5 +12,5 @@ ARGS = parser.parse_args()
 
 config = configparser.ConfigParser(interpolation=None)
 # As we are in `src` directory, look for config in the parent dir
-config.read(os.path.abspath(os.path.join(__file__, '../../config.ini')))
+config.read(os.path.abspath(os.path.join(__file__, '..\\..\\config.ini')))
 PROFILE = config[ARGS.profile]

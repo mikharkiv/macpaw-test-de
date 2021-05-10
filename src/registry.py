@@ -2,7 +2,7 @@ import json
 import logging
 import os
 
-from src import settings
+import settings
 
 FORCE_FILES = settings.ARGS.force
 PROCESSED_FILENAME = settings.PROFILE.get('PROCESSED_FILES_FILENAME')

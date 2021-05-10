@@ -49,8 +49,9 @@ def setup_logging():
 	if settings.PROFILE.getboolean('SAVE_LOG'):
 		# Setup logger's file handler to save in `logs/_date_.log`
 		filename = datetime.now().strftime('logs/%Y-%m-%d_%H-%M-%S.log')
+		log_path = os.path.abspath(os.path.join(__file__, '../../', filename))
 		# Create dirs structure, if not exists
-		os.makedirs(os.path.dirname(filename), exist_ok=True)
+		os.makedirs(os.path.dirname(log_path), exist_ok=True)
 		file_handler = logging.FileHandler(filename)
 		file_handler.setFormatter(formatter)
 		logging.getLogger().addHandler(file_handler)
